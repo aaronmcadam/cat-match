@@ -1,0 +1,33 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "start",
+      "promptOnClose": true,
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "nx",
+        "pattern": [
+          {
+            "regexp": "ERROR in (.*)",
+            "file": 1
+          },
+          {
+            "regexp": "\\((\\d+),(\\d+)\\):(.*)",
+            "line": 1,
+            "column": 2,
+            "message": 3
+          }
+        ],
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "> nx run backstage:serve",
+          "endsPattern": "Web Development Server is listening"
+        }
+      },
+      "label": "npm: start",
+      "detail": "nx serve"
+    }
+  ]
+}
