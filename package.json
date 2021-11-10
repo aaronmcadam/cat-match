@@ -5,7 +5,10 @@
   "scripts": {
     "start": "nx serve",
     "build": "nx build",
-    "test": "nx test"
+    "test": "nx test",
+    "test:all": "yarn test:all:unit && yarn test:all:e2e",
+    "test:all:unit": "nx run-many --all --target=test --parallel",
+    "test:all:e2e": "nx run-many --all --target=e2e --parallel"
   },
   "private": true,
   "dependencies": {
