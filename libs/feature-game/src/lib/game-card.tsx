@@ -1,7 +1,7 @@
-import { AspectRatio, Box, Stack, Text, Image, Center } from '@cat-match/jiji';
-import { CatIcon } from './cat-icon';
+import { Photo } from '@cat-match/data-access';
+import { AspectRatio, Box, Center, Image } from '@cat-match/jiji';
 import * as React from 'react';
-import { keyframes } from '@chakra-ui/react';
+import { CatIcon } from './cat-icon';
 
 export enum GameCardStatus {
   DEFAULT = 'DEFAULT',
@@ -12,13 +12,11 @@ export enum GameCardStatus {
 /* eslint-disable-next-line */
 export interface GameCardProps {
   defaultStatus: GameCardStatus;
+  photo: Photo;
 }
 
-export function GameCard({ defaultStatus }: GameCardProps) {
+export function GameCard({ defaultStatus, photo }: GameCardProps) {
   const [status, setStatus] = React.useState(defaultStatus);
-  const photo = {
-    src: 'https://images.unsplash.com/photo-1529778873920-4da4926a72c2?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=872&q=80',
-  };
 
   return (
     <Box

@@ -1,10 +1,47 @@
 import { Stack, Heading, Text, Logo, Box, SimpleGrid } from '@cat-match/jiji';
 import { GameCard, GameCardStatus } from './game-card';
+import * as React from 'react';
+
+import { Photo, PhotoRepository } from '@cat-match/data-access';
 
 /* eslint-disable-next-line */
 export interface GameScreenProps {}
 
 export function GameScreen(props: GameScreenProps) {
+  const [fetchStatus, setFetchStatus] = React.useState<
+    'idle' | 'loading' | 'done'
+  >('idle');
+  const [photos, setPhotos] = React.useState<Photo[]>([]);
+
+  React.useEffect(() => {
+    async function fetchPhotos() {
+      setFetchStatus('loading');
+
+      try {
+        const photoRepo = new PhotoRepository();
+        const photos = await photoRepo.all();
+
+        // preload photos
+        // If we see that some images haven't preloaded by the time the player
+        // starts the game, we can track the state of them and only show the
+        // grid when all of the photos are ready.
+        photos.forEach((photo) => {
+          const image = new Image();
+
+          image.src = photo.src;
+        });
+
+        setPhotos(photos);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setFetchStatus('done');
+      }
+    }
+
+    fetchPhotos();
+  }, []);
+
   return (
     <Box
       bgImage="/assets/bg-left.png"
@@ -40,28 +77,35 @@ export function GameScreen(props: GameScreenProps) {
               and have fun!
             </Heading>
           </Box>
-          {/* Game Grid */}
-          <SimpleGrid
-            as="ul"
-            role="list"
-            aria-labelledby="gallery-heading"
-            columns={{
-              base: 3,
-              sm: 6,
-            }}
-            spacingX={{ base: 4, sm: 6, xl: 8 }}
-            spacingY={8}
-            pt={8}
-            pb={16}
-            px={8}
-          >
-            <GameCard defaultStatus={GameCardStatus.DEFAULT} />
-            <GameCard defaultStatus={GameCardStatus.REMOVED} />
-            <GameCard defaultStatus={GameCardStatus.DEFAULT} />
-            <GameCard defaultStatus={GameCardStatus.DEFAULT} />
-            <GameCard defaultStatus={GameCardStatus.DEFAULT} />
-            <GameCard defaultStatus={GameCardStatus.DEFAULT} />
-          </SimpleGrid>
+          {fetchStatus === 'loading' ? <Text>Loading...</Text> : null}
+          {fetchStatus === 'done' ? (
+            <SimpleGrid
+              as="ul"
+              role="list"
+              aria-labelledby="gallery-heading"
+              columns={{
+                base: 3,
+                sm: 6,
+              }}
+              spacingX={{ base: 4, sm: 6, xl: 8 }}
+              spacingY={8}
+              pt={8}
+              pb={16}
+              px={8}
+            >
+              {photos.map((photo) => {
+                // TODO: The photos load quite slowly when clicking the card. We
+                // should think about preloading them.
+                return (
+                  <GameCard
+                    key={photo.id}
+                    photo={photo}
+                    defaultStatus={GameCardStatus.DEFAULT}
+                  />
+                );
+              })}
+            </SimpleGrid>
+          ) : null}
         </Stack>
       </Box>
     </Box>

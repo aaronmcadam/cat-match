@@ -3,6 +3,7 @@
   "projects": {
     "cat-match": "apps/cat-match",
     "cat-match-e2e": "apps/cat-match-e2e",
+    "data-access": "libs/data-access",
     "feature-game": "libs/feature-game",
     "jiji": "libs/jiji",
     "shared-testing": "libs/shared-testing"

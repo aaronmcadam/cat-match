@@ -17,6 +17,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@cat-match/data-access": ["libs/data-access/src/index.ts"],
       "@cat-match/feature-game": ["libs/feature-game/src/index.ts"],
       "@cat-match/jiji": ["libs/jiji/src/index.ts"],
       "@cat-match/shared-testing": ["libs/shared-testing/src/index.ts"]
