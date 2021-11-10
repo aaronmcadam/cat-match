@@ -38,15 +38,15 @@
   "generators": {
     "@nrwl/react": {
       "application": {
-        "style": "@emotion/styled",
+        "style": "none",
         "linter": "eslint",
         "babel": true
       },
       "component": {
-        "style": "@emotion/styled"
+        "style": "none"
       },
       "library": {
-        "style": "@emotion/styled",
+        "style": "none",
         "linter": "eslint"
       }
     }
