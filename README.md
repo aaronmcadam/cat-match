@@ -12,6 +12,12 @@ TODO
 
 Run `yarn start` to start up the server and view the application.
 
+## Working on the application
+
+Start development by running `yarn dev`, which will start the dev server and Cypress.
+
+> We recommend using ["Cypress Driven Development"](https://egghead.io/lessons/cypress-use-cypress-driven-development-in-order-to-add-a-feature-to-a-react-app) to follow an [outside-in TDD workflow](https://www.codecademy.com/articles/tdd-outside-in).
+
 ### Running tests
 
 By default, `yarn test` will only run tests for the app. To run every test in the project, run `yarn test:all`.
