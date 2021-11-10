@@ -1,3 +1,16 @@
 // This module is for components we directly export from Chakra with no customisations.
 
-export { Box, Heading, chakra } from '@chakra-ui/react';
+export {
+  AspectRatio,
+  Box,
+  Center,
+  chakra,
+  Heading,
+  Image,
+  SimpleGrid,
+  Stack,
+  Text,
+  VisuallyHidden,
+  useToken,
+} from '@chakra-ui/react';
+export type { HTMLChakraProps } from '@chakra-ui/react';

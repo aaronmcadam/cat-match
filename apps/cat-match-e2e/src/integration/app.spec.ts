@@ -1,7 +1,7 @@
-describe('cat-match', () => {
+describe('CatMatch', () => {
   beforeEach(() => cy.visit('/'));
 
-  it('displays welcome message', () => {
-    cy.findByText('Welcome to cat-match!').should('be.visible');
+  it('displays app name', () => {
+    cy.findByRole('heading').should('have.text', 'CatMatch');
   });
 });

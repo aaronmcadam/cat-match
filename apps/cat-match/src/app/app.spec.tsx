@@ -1,17 +1,11 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@cat-match/shared-testing';
 
-import App from './app';
+import { App } from './app';
 
 describe('App', () => {
-  it('should render successfully', () => {
-    const { baseElement } = render(<App />);
+  it('displays the app name', () => {
+    render(<App />);
 
-    expect(baseElement).toBeTruthy();
-  });
-
-  it('should have a greeting as the title', () => {
-    const { getByText } = render(<App />);
-
-    expect(getByText('Welcome to cat-match!')).toBeTruthy();
+    expect(screen.getByText('CatMatch')).toBeInTheDocument();
   });
 });

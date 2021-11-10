@@ -23,7 +23,8 @@ const overrides = {
   },
   config: {
     // TODO: Turn on system colour mode if there's time to adjust colours.
-    // useSystemColorMode: true,
+    useSystemColorMode: false,
+    initialColorMode: 'light',
   },
   styles: {
     global: {
