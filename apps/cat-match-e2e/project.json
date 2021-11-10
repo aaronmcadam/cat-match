@@ -1,0 +1,29 @@
+{
+  "root": "apps/cat-match-e2e",
+  "sourceRoot": "apps/cat-match-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@nrwl/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/cat-match-e2e/cypress.json",
+        "devServerTarget": "cat-match:serve",
+        "tsConfig": "apps/cat-match-e2e/tsconfig.json"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "cat-match:serve:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/cat-match-e2e/**/*.{js,ts}"]
+      }
+    }
+  },
+  "tags": [],
+  "implicitDependencies": ["cat-match"]
+}
