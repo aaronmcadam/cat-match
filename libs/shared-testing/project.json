@@ -1,0 +1,23 @@
+{
+  "root": "libs/shared-testing",
+  "sourceRoot": "libs/shared-testing/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/shared-testing/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/shared-testing"],
+      "options": {
+        "jestConfig": "libs/shared-testing/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

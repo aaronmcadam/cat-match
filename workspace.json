@@ -2,6 +2,8 @@
   "version": 2,
   "projects": {
     "cat-match": "apps/cat-match",
-    "cat-match-e2e": "apps/cat-match-e2e"
+    "cat-match-e2e": "apps/cat-match-e2e",
+    "jiji": "libs/jiji",
+    "shared-testing": "libs/shared-testing"
   }
 }

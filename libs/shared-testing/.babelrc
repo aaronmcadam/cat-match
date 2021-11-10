@@ -1,5 +1,4 @@
 {
-  "babelrcRoots": ["*"],
   "presets": [
     [
       "@nrwl/react/babel",
@@ -9,5 +8,6 @@
         "importSource": "@emotion/react"
       }
     ]
-  ]
+  ],
+  "plugins": ["@emotion/babel-plugin"]
 }
