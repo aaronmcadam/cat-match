@@ -9,7 +9,9 @@
     "test": "nx test",
     "test:all": "yarn test:all:unit && yarn test:all:e2e",
     "test:all:unit": "nx run-many --all --target=test --parallel",
-    "test:all:e2e": "nx run-many --all --target=e2e --parallel"
+    "test:all:e2e": "nx run-many --all --target=e2e --parallel",
+    "storybook:jiji": "nx run jiji:storybook",
+    "storybook:game": "nx run feature-game:storybook"
   },
   "private": true,
   "dependencies": {
