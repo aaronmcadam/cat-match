@@ -1,16 +1,23 @@
 import { Photo } from '@cat-match/data-access';
 import { createModel } from 'xstate/lib/model';
 
-export enum CardStatus {
-  DEFAULT = 'DEFAULT',
+export enum CardVisibilityStatus {
+  UNSELECTED = 'UNSELECTED',
   SELECTED = 'SELECTED',
-  REMOVED = 'REMOVED',
+  HIDDEN = 'HIDDEN',
+}
+
+export enum CardMatchStatus {
+  UNMATCHED = 'UNMATCHED',
+  MATCHED = 'MATCHED',
+  DIFFERENT = 'DIFFERENT',
 }
 
 // Cards are equal by their photo's ID
 export interface Card {
   id: string;
-  status: CardStatus;
+  visibilityStatus: CardVisibilityStatus;
+  matchStatus: CardMatchStatus;
   photo: Photo;
 }
 
@@ -41,10 +48,11 @@ export const gameModel = createModel(
       RECEIVE_DATA: (photos: Photo[]) => ({ photos }),
       SELECTED: (cardId: string) => ({ cardId }),
       READY_TO_MATCH: () => ({}),
-      MATCH: (cardIds: string[]) => ({ cardIds }),
+      MATCH: () => ({}),
       NO_MATCH: () => ({}),
       PLAY_AGAIN: () => ({}),
       WAITING_FOR_OTHER_SELECTION: () => ({}),
+      CONTINUE: () => ({}),
     },
   }
 );
@@ -74,7 +82,8 @@ const addCards = gameModel.assign(
 
         acc[id] = {
           id,
-          status: CardStatus.DEFAULT,
+          visibilityStatus: CardVisibilityStatus.UNSELECTED,
+          matchStatus: CardMatchStatus.UNMATCHED,
           photo,
         };
 
@@ -92,24 +101,62 @@ const updateContext = gameModel.assign(
     cards: (context, event) => {
       return {
         ...context.cards,
-        [event.cardIds[0]]: {
-          ...context.cards[event.cardIds[0]],
-          status: CardStatus.REMOVED,
+        [context.selections[0]]: {
+          ...context.cards[context.selections[0]],
+          visibilityStatus: CardVisibilityStatus.HIDDEN,
         },
-        [event.cardIds[1]]: {
-          ...context.cards[event.cardIds[1]],
-          status: CardStatus.REMOVED,
+        [context.selections[1]]: {
+          ...context.cards[context.selections[1]],
+          visibilityStatus: CardVisibilityStatus.HIDDEN,
         },
       };
     },
     stack: (context, event) => {
-      return [...context.stack, ...event.cardIds];
+      return [...context.stack, ...context.selections];
     },
     selections: (context, event) => {
       return [];
     },
   },
+  'CONTINUE'
+);
+
+const showMatched = gameModel.assign(
+  {
+    cards: (context, event) => {
+      return {
+        ...context.cards,
+        [context.selections[0]]: {
+          ...context.cards[context.selections[0]],
+          matchStatus: CardMatchStatus.MATCHED,
+        },
+        [context.selections[1]]: {
+          ...context.cards[context.selections[1]],
+          matchStatus: CardMatchStatus.MATCHED,
+        },
+      };
+    },
+  },
   'MATCH'
+);
+
+const showDifferences = gameModel.assign(
+  {
+    cards: (context, event) => {
+      return {
+        ...context.cards,
+        [context.selections[0]]: {
+          ...context.cards[context.selections[0]],
+          matchStatus: CardMatchStatus.DIFFERENT,
+        },
+        [context.selections[1]]: {
+          ...context.cards[context.selections[1]],
+          matchStatus: CardMatchStatus.DIFFERENT,
+        },
+      };
+    },
+  },
+  'NO_MATCH'
 );
 
 const saveSelection = gameModel.assign(
@@ -122,7 +169,7 @@ const saveSelection = gameModel.assign(
         ...context.cards,
         [event.cardId]: {
           ...context.cards[event.cardId],
-          status: CardStatus.SELECTED,
+          visibilityStatus: CardVisibilityStatus.SELECTED,
         },
       };
     },
@@ -140,16 +187,18 @@ const clearSelections = gameModel.assign(
         ...context.cards,
         [context.selections[0]]: {
           ...context.cards[context.selections[0]],
-          status: CardStatus.DEFAULT,
+          visibilityStatus: CardVisibilityStatus.UNSELECTED,
+          matchStatus: CardMatchStatus.UNMATCHED,
         },
         [context.selections[1]]: {
           ...context.cards[context.selections[1]],
-          status: CardStatus.DEFAULT,
+          visibilityStatus: CardVisibilityStatus.UNSELECTED,
+          matchStatus: CardMatchStatus.UNMATCHED,
         },
       };
     },
   },
-  'NO_MATCH'
+  'CONTINUE'
 );
 
 const resetStack = gameModel.assign(
@@ -222,7 +271,7 @@ export const gameMachine = gameModel.createMachine({
         },
         readyToMatch: {
           after: {
-            1000: {
+            250: {
               cond: twoCardsSelected,
               target: 'matching',
             },
@@ -240,7 +289,7 @@ export const gameMachine = gameModel.createMachine({
                     context.cards[selection1].photo.id ===
                     context.cards[selection2].photo.id
                   ) {
-                    send(gameModel.events.MATCH(context.selections));
+                    send(gameModel.events.MATCH());
                   } else {
                     send(gameModel.events.NO_MATCH());
                   }
@@ -248,10 +297,46 @@ export const gameMachine = gameModel.createMachine({
               },
               on: {
                 NO_MATCH: {
+                  target: 'different',
+                  actions: showDifferences,
+                },
+                MATCH: {
+                  target: 'matched',
+                  actions: showMatched,
+                },
+              },
+            },
+            different: {
+              after: {
+                1000: 'updateDifferent',
+              },
+            },
+            updateDifferent: {
+              invoke: {
+                src: (context) => (send) => {
+                  send(gameModel.events.CONTINUE());
+                },
+              },
+              on: {
+                CONTINUE: {
                   target: '#ready.idle',
                   actions: clearSelections,
                 },
-                MATCH: {
+              },
+            },
+            matched: {
+              after: {
+                1000: 'updateMatch',
+              },
+            },
+            updateMatch: {
+              invoke: {
+                src: (context) => (send) => {
+                  send(gameModel.events.CONTINUE());
+                },
+              },
+              on: {
+                CONTINUE: {
                   target: '#ready.idle',
                   actions: updateContext,
                 },

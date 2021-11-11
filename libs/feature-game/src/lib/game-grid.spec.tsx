@@ -1,11 +1,16 @@
 import { render, screen } from '@cat-match/shared-testing';
 import { GameGrid } from './game-grid';
-import { CardStatus } from './machines/game-machine';
+import {
+  Card,
+  CardMatchStatus,
+  CardVisibilityStatus,
+} from './machines/game-machine';
 
-const cards = [
+const cards: Card[] = [
   {
     id: 'card-1',
-    status: CardStatus.DEFAULT,
+    visibilityStatus: CardVisibilityStatus.UNSELECTED,
+    matchStatus: CardMatchStatus.UNMATCHED,
     photo: {
       id: 'photo-1',
       src: 'https://images.unsplash.com/photo-1529778873920-4da4926a72c2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=872&q=80',
@@ -13,7 +18,8 @@ const cards = [
   },
   {
     id: 'card-2',
-    status: CardStatus.DEFAULT,
+    visibilityStatus: CardVisibilityStatus.UNSELECTED,
+    matchStatus: CardMatchStatus.UNMATCHED,
     photo: {
       id: 'photo-1',
       src: 'https://images.unsplash.com/photo-1529778873920-4da4926a72c2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=872&q=80',

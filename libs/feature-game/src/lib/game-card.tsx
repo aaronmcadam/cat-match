@@ -1,9 +1,20 @@
-import { AspectRatio, Box, Center, Image } from '@cat-match/jiji';
+import {
+  AspectRatio,
+  Box,
+  Center,
+  Image,
+  Circle,
+  CheckIconSolid,
+  XIconSolid,
+} from '@cat-match/jiji';
 import * as React from 'react';
 import { CatIcon } from './cat-icon';
-import { Card, CardStatus } from './machines/game-machine';
+import {
+  Card,
+  CardMatchStatus,
+  CardVisibilityStatus,
+} from './machines/game-machine';
 
-/* eslint-disable-next-line */
 export interface GameCardProps {
   card: Card;
   onClick?: (cardId: string) => void;
@@ -11,7 +22,7 @@ export interface GameCardProps {
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export function GameCard({ card, onClick = () => {} }: GameCardProps) {
-  if (card.status === CardStatus.REMOVED) {
+  if (card.visibilityStatus === CardVisibilityStatus.HIDDEN) {
     return <Box data-testid="placeholder" w="full" h="full" />;
   }
 
@@ -24,10 +35,35 @@ export function GameCard({ card, onClick = () => {} }: GameCardProps) {
       }}
       role="group"
       w="full"
+      pos="relative"
     >
+      {card.matchStatus === CardMatchStatus.DIFFERENT ? (
+        <Circle
+          bg="red.100"
+          pos="absolute"
+          zIndex="overlay"
+          top={2}
+          left={2}
+          p={1}
+        >
+          <XIconSolid boxSize={4} color="red.800" />
+        </Circle>
+      ) : null}
+      {card.matchStatus === CardMatchStatus.MATCHED ? (
+        <Circle
+          bg="green.100"
+          pos="absolute"
+          zIndex="overlay"
+          top={2}
+          left={2}
+          p={1}
+        >
+          <CheckIconSolid boxSize={4} color="green.800" />
+        </Circle>
+      ) : null}
       <AspectRatio boxShadow="base" rounded="lg" overflow="hidden" ratio={1}>
         <>
-          {card.status === CardStatus.DEFAULT ? (
+          {card.visibilityStatus === CardVisibilityStatus.UNSELECTED ? (
             <Center
               data-testid="card-default"
               bg="gray.50"
@@ -42,7 +78,7 @@ export function GameCard({ card, onClick = () => {} }: GameCardProps) {
               <CatIcon h={10} color="gray.500" />
             </Center>
           ) : null}
-          {card.status === CardStatus.SELECTED ? (
+          {card.visibilityStatus === CardVisibilityStatus.SELECTED ? (
             <Image
               data-testid="card-selected"
               src={card.photo.src}

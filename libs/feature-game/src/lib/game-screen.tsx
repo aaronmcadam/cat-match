@@ -5,7 +5,11 @@ import * as React from 'react';
 import { GameFinishedMessage } from './game-finished-message';
 import { GameGrid } from './game-grid';
 import { Hero } from './hero';
-import { CardStatus, gameMachine, gameModel } from './machines/game-machine';
+import {
+  CardVisibilityStatus,
+  gameMachine,
+  gameModel,
+} from './machines/game-machine';
 
 /* eslint-disable-next-line */
 export interface GameScreenProps {}
@@ -28,7 +32,7 @@ export function GameScreen(props: GameScreenProps) {
   }, [send]);
 
   const gameIsFinished = Object.values(state.context.cards).every(
-    (card) => card.status === CardStatus.REMOVED
+    (card) => card.visibilityStatus === CardVisibilityStatus.HIDDEN
   );
 
   return (
@@ -43,10 +47,10 @@ export function GameScreen(props: GameScreenProps) {
         bgPosition="right top"
         h="100vh"
       >
-        <Stack spacing={8} py={16} maxW="7xl" mx="auto">
+        <Stack spacing={8} pt={12} maxW="7xl" mx="auto">
           <Logo />
           <Hero />
-          {state.matches('pending') ? (
+          {state.matches('fetchingPhotos') ? (
             <Text textAlign="center" fontWeight="medium" fontSize="xl">
               Loading...
             </Text>

@@ -1,6 +1,6 @@
 import { render, screen } from '@cat-match/shared-testing';
 import { GameCard } from './game-card';
-import { CardStatus } from './machines/game-machine';
+import { CardVisibilityStatus, CardMatchStatus } from './machines/game-machine';
 
 describe('GameCard', () => {
   it('renders a card', () => {
@@ -8,7 +8,8 @@ describe('GameCard', () => {
       <GameCard
         card={{
           id: 'card-1',
-          status: CardStatus.DEFAULT,
+          visibilityStatus: CardVisibilityStatus.UNSELECTED,
+          matchStatus: CardMatchStatus.UNMATCHED,
           photo: {
             id: 'photo-1',
             src: 'https://images.unsplash.com/photo-1529778873920-4da4926a72c2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=872&q=80',
@@ -25,7 +26,8 @@ describe('GameCard', () => {
       <GameCard
         card={{
           id: 'card-1',
-          status: CardStatus.REMOVED,
+          visibilityStatus: CardVisibilityStatus.HIDDEN,
+          matchStatus: CardMatchStatus.UNMATCHED,
           photo: {
             id: 'photo-1',
             src: 'https://images.unsplash.com/photo-1529778873920-4da4926a72c2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=872&q=80',
@@ -43,7 +45,8 @@ describe('GameCard', () => {
       <GameCard
         card={{
           id: 'card-1',
-          status: CardStatus.DEFAULT,
+          visibilityStatus: CardVisibilityStatus.UNSELECTED,
+          matchStatus: CardMatchStatus.UNMATCHED,
           photo: {
             id: 'photo-1',
             src: 'https://images.unsplash.com/photo-1529778873920-4da4926a72c2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=872&q=80',
@@ -61,7 +64,8 @@ describe('GameCard', () => {
       <GameCard
         card={{
           id: 'card-1',
-          status: CardStatus.SELECTED,
+          visibilityStatus: CardVisibilityStatus.SELECTED,
+          matchStatus: CardMatchStatus.UNMATCHED,
           photo: {
             id: 'photo-1',
             src: 'https://images.unsplash.com/photo-1529778873920-4da4926a72c2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=872&q=80',
@@ -80,7 +84,8 @@ describe('GameCard', () => {
       <GameCard
         card={{
           id: 'card-1',
-          status: CardStatus.DEFAULT,
+          visibilityStatus: CardVisibilityStatus.UNSELECTED,
+          matchStatus: CardMatchStatus.UNMATCHED,
           photo: {
             id: 'photo-1',
             src: 'https://images.unsplash.com/photo-1529778873920-4da4926a72c2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=872&q=80',
