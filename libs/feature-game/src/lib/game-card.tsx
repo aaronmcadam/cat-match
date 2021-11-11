@@ -13,9 +13,10 @@ export enum GameCardStatus {
 export interface GameCardProps {
   defaultStatus: GameCardStatus;
   photo: Photo;
+  onClick: (cardId: string) => void;
 }
 
-export function GameCard({ defaultStatus, photo }: GameCardProps) {
+export function GameCard({ defaultStatus, photo, onClick }: GameCardProps) {
   const [status, setStatus] = React.useState(defaultStatus);
 
   return (
@@ -23,7 +24,7 @@ export function GameCard({ defaultStatus, photo }: GameCardProps) {
       data-testid="game-card"
       as="button"
       onClick={() => {
-        setStatus(GameCardStatus.FLIPPED);
+        onClick(photo.id);
       }}
       role="group"
       w="full"
@@ -43,6 +44,7 @@ export function GameCard({ defaultStatus, photo }: GameCardProps) {
                 }}
               >
                 <CatIcon h={10} color="gray.500" />
+                <Box>{photo.id}</Box>
               </Center>
             ) : null}
             {status === GameCardStatus.FLIPPED ? (

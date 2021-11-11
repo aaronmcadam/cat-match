@@ -1,8 +1,10 @@
+import { useMachine } from '@xstate/react';
 import { Stack, Heading, Text, Logo, Box, SimpleGrid } from '@cat-match/jiji';
 import { GameCard, GameCardStatus } from './game-card';
 import * as React from 'react';
 
 import { Photo, PhotoRepository } from '@cat-match/data-access';
+import { gameMachine, gameModel } from './machines/game-machine';
 
 /* eslint-disable-next-line */
 export interface GameScreenProps {}
@@ -12,6 +14,14 @@ export function GameScreen(props: GameScreenProps) {
     'idle' | 'loading' | 'done'
   >('idle');
   const [photos, setPhotos] = React.useState<Photo[]>([]);
+  const cardIds = photos.map((photo) => photo.id);
+  console.log('cardIds', cardIds);
+  const [state, send] = useMachine(gameMachine, {
+    devTools: true,
+    context: {
+      cards: cardIds,
+    },
+  });
 
   React.useEffect(() => {
     async function fetchPhotos() {
@@ -97,14 +107,17 @@ export function GameScreen(props: GameScreenProps) {
               pb={16}
               px={8}
             >
-              {photos.map((photo) => {
-                // TODO: The photos load quite slowly when clicking the card. We
-                // should think about preloading them.
+              {photos.map((photo, index) => {
+                // The ids clash because there are two photos with the same id.
+                // We can fix this by generating a uuid for the card itself and using to the photo id for comparison.
                 return (
                   <GameCard
-                    key={photo.id}
+                    key={`${photo.id}-${index}`}
                     photo={photo}
                     defaultStatus={GameCardStatus.DEFAULT}
+                    onClick={(cardId) => {
+                      send(gameModel.events.SELECTED(cardId));
+                    }}
                   />
                 );
               })}
