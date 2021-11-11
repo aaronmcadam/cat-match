@@ -40,6 +40,7 @@ export const gameModel = createModel(
       FETCH_PHOTOS: () => ({}),
       RECEIVE_DATA: (photos: Photo[]) => ({ photos }),
       SELECTED: (cardId: string) => ({ cardId }),
+      READY_TO_MATCH: () => ({}),
       MATCH: (cardIds: string[]) => ({ cardIds }),
       NO_MATCH: () => ({}),
       PLAY_AGAIN: () => ({}),
@@ -165,8 +166,6 @@ function twoCardsSelected(context: GameContext) {
   return context.selections.length === 2;
 }
 
-// We should delay updating the state for a little while so that
-// the player can see what the card photo is before it's hidden again.
 export const gameMachine = gameModel.createMachine({
   id: 'game',
   context: gameModel.initialContext,
@@ -196,7 +195,7 @@ export const gameMachine = gameModel.createMachine({
           on: {
             SELECTED: {
               actions: saveSelection,
-              target: 'checkMatch',
+              target: 'showingSelection',
             },
             PLAY_AGAIN: {
               actions: resetStack,
@@ -204,17 +203,37 @@ export const gameMachine = gameModel.createMachine({
             },
           },
         },
-        checkMatch: {
+        showingSelection: {
+          invoke: {
+            src: (context) => (send) => {
+              if (context.selections.length !== 2) {
+                send(gameModel.events.WAITING_FOR_OTHER_SELECTION());
+              }
+
+              send(gameModel.events.READY_TO_MATCH());
+            },
+          },
+          on: {
+            WAITING_FOR_OTHER_SELECTION: 'idle',
+            READY_TO_MATCH: {
+              target: 'readyToMatch',
+            },
+          },
+        },
+        readyToMatch: {
+          after: {
+            1000: {
+              cond: twoCardsSelected,
+              target: 'matching',
+            },
+          },
+        },
+        matching: {
           initial: 'checking',
           states: {
             checking: {
               invoke: {
-                // We could use a condition to wait until the second selection is made.
                 src: (context) => (send) => {
-                  if (context.selections.length === 1) {
-                    return send(gameModel.events.WAITING_FOR_OTHER_SELECTION());
-                  }
-
                   const [selection1, selection2] = context.selections;
 
                   if (
@@ -228,9 +247,6 @@ export const gameMachine = gameModel.createMachine({
                 },
               },
               on: {
-                WAITING_FOR_OTHER_SELECTION: {
-                  target: '#ready.idle',
-                },
                 NO_MATCH: {
                   target: '#ready.idle',
                   actions: clearSelections,
@@ -242,9 +258,6 @@ export const gameMachine = gameModel.createMachine({
               },
             },
           },
-        },
-        finished: {
-          type: 'final',
         },
       },
     },
