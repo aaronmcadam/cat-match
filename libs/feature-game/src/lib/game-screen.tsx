@@ -1,56 +1,47 @@
 import { useMachine } from '@xstate/react';
-import { Stack, Heading, Text, Logo, Box, SimpleGrid } from '@cat-match/jiji';
-import { GameCard, GameCardStatus } from './game-card';
+import {
+  Stack,
+  Heading,
+  Text,
+  Logo,
+  Box,
+  SimpleGrid,
+  RefreshIconSolid,
+  Button,
+} from '@cat-match/jiji';
+import { GameCard } from './game-card';
 import * as React from 'react';
 
 import { Photo, PhotoRepository } from '@cat-match/data-access';
-import { gameMachine, gameModel } from './machines/game-machine';
+import {
+  GameCardStatus,
+  gameMachine,
+  gameModel,
+} from './machines/game-machine';
 
 /* eslint-disable-next-line */
 export interface GameScreenProps {}
 
 export function GameScreen(props: GameScreenProps) {
-  const [fetchStatus, setFetchStatus] = React.useState<
-    'idle' | 'loading' | 'done'
-  >('idle');
-  const [photos, setPhotos] = React.useState<Photo[]>([]);
-  const cardIds = photos.map((photo) => photo.id);
-  console.log('cardIds', cardIds);
   const [state, send] = useMachine(gameMachine, {
     devTools: true,
-    context: {
-      cards: cardIds,
+    services: {
+      fetchPhotos: async (context, event) => {
+        const photoRepo = new PhotoRepository();
+        const photos = await photoRepo.all();
+
+        send(gameModel.events.RECEIVE_DATA(photos));
+      },
     },
   });
 
   React.useEffect(() => {
-    async function fetchPhotos() {
-      setFetchStatus('loading');
+    send(gameModel.events.FETCH_PHOTOS());
+  }, [send]);
 
-      try {
-        const photoRepo = new PhotoRepository();
-        const photos = await photoRepo.all();
-
-        // preload photos
-        // If we see that some images haven't preloaded by the time the player
-        // starts the game, we can track the state of them and only show the
-        // grid when all of the photos are ready.
-        photos.forEach((photo) => {
-          const image = new Image();
-
-          image.src = photo.src;
-        });
-
-        setPhotos(photos);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setFetchStatus('done');
-      }
-    }
-
-    fetchPhotos();
-  }, []);
+  const gameIsFinished = Object.values(state.context.cards).every(
+    (card) => card.status === GameCardStatus.REMOVED
+  );
 
   return (
     <Box
@@ -87,41 +78,67 @@ export function GameScreen(props: GameScreenProps) {
               and have fun!
             </Heading>
           </Box>
-          {fetchStatus === 'loading' ? (
+          {state.matches('pending') ? (
             <Text textAlign="center" fontWeight="medium" fontSize="xl">
               Loading...
             </Text>
           ) : null}
-          {fetchStatus === 'done' ? (
-            <SimpleGrid
-              as="ul"
-              role="list"
-              aria-labelledby="gallery-heading"
-              columns={{
-                base: 3,
-                sm: 6,
-              }}
-              spacingX={{ base: 4, sm: 6, xl: 8 }}
-              spacingY={8}
-              pt={8}
-              pb={16}
-              px={8}
-            >
-              {photos.map((photo, index) => {
-                // The ids clash because there are two photos with the same id.
-                // We can fix this by generating a uuid for the card itself and using to the photo id for comparison.
-                return (
-                  <GameCard
-                    key={`${photo.id}-${index}`}
-                    photo={photo}
-                    defaultStatus={GameCardStatus.DEFAULT}
-                    onClick={(cardId) => {
-                      send(gameModel.events.SELECTED(cardId));
-                    }}
-                  />
-                );
-              })}
-            </SimpleGrid>
+          {state.matches('ready') ? (
+            gameIsFinished ? (
+              <Stack spacing={6} align="center">
+                <Text
+                  fontWeight="bold"
+                  fontSize="5xl"
+                  textAlign="center"
+                  lineHeight={1.2}
+                >
+                  Well done{' '}
+                  <span role="img" aria-label="Celebrate">
+                    🎉
+                  </span>
+                  <br />
+                  You completed the game!
+                </Text>
+                <Button
+                  onClick={() => {
+                    send(gameModel.events.PLAY_AGAIN());
+                  }}
+                  variant="primary"
+                  leadingIcon={<RefreshIconSolid />}
+                >
+                  Play again
+                </Button>
+              </Stack>
+            ) : (
+              <SimpleGrid
+                as="ul"
+                role="list"
+                aria-labelledby="gallery-heading"
+                columns={{
+                  base: 3,
+                  sm: 6,
+                }}
+                spacingX={{ base: 4, sm: 6, xl: 8 }}
+                spacingY={8}
+                pt={8}
+                pb={16}
+                px={8}
+              >
+                {Object.values(state.context.cards).map((card) => {
+                  // The ids clash because there are two photos with the same id.
+                  // We can fix this by generating a uuid for the card itself and using to the photo id for comparison.
+                  return (
+                    <GameCard
+                      key={card.id}
+                      card={card}
+                      onClick={(cardId) => {
+                        send(gameModel.events.SELECTED(cardId));
+                      }}
+                    />
+                  );
+                })}
+              </SimpleGrid>
+            )
           ) : null}
         </Stack>
       </Box>
