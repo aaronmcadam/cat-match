@@ -1,7 +1,12 @@
 describe('CatMatch', () => {
   beforeEach(() => cy.visit('/'));
 
-  it('displays app name', () => {
-    cy.findByRole('heading').should('have.text', 'CatMatch');
+  it('greets the player', () => {
+    cy.findByRole('heading').should(
+      'have.text',
+      'Find the matching pairs and have fun!'
+    );
   });
+
+  it('lets the player match cards', () => {});
 });
