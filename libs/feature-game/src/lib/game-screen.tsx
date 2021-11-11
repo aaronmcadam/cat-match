@@ -1,23 +1,11 @@
+import { PhotoRepository } from '@cat-match/data-access';
+import { Box, Logo, Stack, Text } from '@cat-match/jiji';
 import { useMachine } from '@xstate/react';
-import {
-  Stack,
-  Heading,
-  Text,
-  Logo,
-  Box,
-  SimpleGrid,
-  RefreshIconSolid,
-  Button,
-} from '@cat-match/jiji';
-import { GameCard } from './game-card';
 import * as React from 'react';
-
-import { Photo, PhotoRepository } from '@cat-match/data-access';
-import {
-  GameCardStatus,
-  gameMachine,
-  gameModel,
-} from './machines/game-machine';
+import { GameFinishedMessage } from './game-finished-message';
+import { GameGrid } from './game-grid';
+import { Hero } from './hero';
+import { CardStatus, gameMachine, gameModel } from './machines/game-machine';
 
 /* eslint-disable-next-line */
 export interface GameScreenProps {}
@@ -40,7 +28,7 @@ export function GameScreen(props: GameScreenProps) {
   }, [send]);
 
   const gameIsFinished = Object.values(state.context.cards).every(
-    (card) => card.status === GameCardStatus.REMOVED
+    (card) => card.status === CardStatus.REMOVED
   );
 
   return (
@@ -57,27 +45,7 @@ export function GameScreen(props: GameScreenProps) {
       >
         <Stack spacing={8} py={16} maxW="7xl" mx="auto">
           <Logo />
-          {/* Hero */}
-          <Box textAlign="center">
-            <Heading
-              as="h1"
-              fontSize="6xl"
-              fontWeight="extrabold"
-              lineHeight={1}
-              letterSpacing="tight"
-              maxW="44rem"
-              mx="auto"
-            >
-              <Box
-                as="mark"
-                bgGradient="linear(to-r, #14AFFC, #7F23F7, #FC19AD)"
-                bgClip="text"
-              >
-                Find the matching pairs
-              </Box>{' '}
-              and have fun!
-            </Heading>
-          </Box>
+          <Hero />
           {state.matches('pending') ? (
             <Text textAlign="center" fontWeight="medium" fontSize="xl">
               Loading...
@@ -85,59 +53,19 @@ export function GameScreen(props: GameScreenProps) {
           ) : null}
           {state.matches('ready') ? (
             gameIsFinished ? (
-              <Stack spacing={6} align="center">
-                <Text
-                  fontWeight="bold"
-                  fontSize="5xl"
-                  textAlign="center"
-                  lineHeight={1.2}
-                >
-                  Well done{' '}
-                  <span role="img" aria-label="Celebrate">
-                    🎉
-                  </span>
-                  <br />
-                  You completed the game!
-                </Text>
-                <Button
-                  onClick={() => {
-                    send(gameModel.events.PLAY_AGAIN());
-                  }}
-                  variant="primary"
-                  leadingIcon={<RefreshIconSolid />}
-                >
-                  Play again
-                </Button>
-              </Stack>
-            ) : (
-              <SimpleGrid
-                as="ul"
-                role="list"
-                aria-labelledby="gallery-heading"
-                columns={{
-                  base: 3,
-                  sm: 6,
+              <GameFinishedMessage
+                onReplayButtonClick={() => {
+                  send(gameModel.events.PLAY_AGAIN());
                 }}
-                spacingX={{ base: 4, sm: 6, xl: 8 }}
-                spacingY={8}
-                pt={8}
-                pb={16}
-                px={8}
-              >
-                {Object.values(state.context.cards).map((card) => {
-                  // The ids clash because there are two photos with the same id.
-                  // We can fix this by generating a uuid for the card itself and using to the photo id for comparison.
-                  return (
-                    <GameCard
-                      key={card.id}
-                      card={card}
-                      onClick={(cardId) => {
-                        send(gameModel.events.SELECTED(cardId));
-                      }}
-                    />
-                  );
-                })}
-              </SimpleGrid>
+              />
+            ) : (
+              <GameGrid
+                pairCount={state.context.stack.length / 2}
+                cards={Object.values(state.context.cards)}
+                onCardClick={(cardId) => {
+                  send(gameModel.events.SELECTED(cardId));
+                }}
+              />
             )
           ) : null}
         </Stack>

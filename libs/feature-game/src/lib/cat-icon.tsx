@@ -10,6 +10,7 @@ export function CatIcon(props: CatIconProps) {
 
   return (
     <chakra.svg
+      data-testid="icon-cat"
       viewBox="0 0 58 40"
       width="59"
       height="40"

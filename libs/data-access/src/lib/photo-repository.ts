@@ -16,7 +16,7 @@ export class PhotoRepository {
     // It looks like the size query param doesn't really return a smaller image
     // at all, so we're downloading files that are larger than we need.
     // We'll need to deal with slow performance on the front end.
-    const limit = 2;
+    const limit = 12;
     const response = await fetch(
       `https://api.thecatapi.com/v1/images/search?mime_types=[jpg]&size=thumb&limit=${limit}&order=RANDOM`
     );

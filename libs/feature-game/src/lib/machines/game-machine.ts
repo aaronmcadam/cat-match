@@ -1,7 +1,7 @@
 import { Photo } from '@cat-match/data-access';
 import { createModel } from 'xstate/lib/model';
 
-export enum GameCardStatus {
+export enum CardStatus {
   DEFAULT = 'DEFAULT',
   SELECTED = 'SELECTED',
   REMOVED = 'REMOVED',
@@ -10,7 +10,7 @@ export enum GameCardStatus {
 // Cards are equal by their photo's ID
 export interface Card {
   id: string;
-  status: GameCardStatus;
+  status: CardStatus;
   photo: Photo;
 }
 
@@ -74,7 +74,7 @@ const addCards = gameModel.assign(
 
         acc[id] = {
           id,
-          status: GameCardStatus.DEFAULT,
+          status: CardStatus.DEFAULT,
           photo,
         };
 
@@ -94,11 +94,11 @@ const updateContext = gameModel.assign(
         ...context.cards,
         [event.cardIds[0]]: {
           ...context.cards[event.cardIds[0]],
-          status: GameCardStatus.REMOVED,
+          status: CardStatus.REMOVED,
         },
         [event.cardIds[1]]: {
           ...context.cards[event.cardIds[1]],
-          status: GameCardStatus.REMOVED,
+          status: CardStatus.REMOVED,
         },
       };
     },
@@ -122,7 +122,7 @@ const saveSelection = gameModel.assign(
         ...context.cards,
         [event.cardId]: {
           ...context.cards[event.cardId],
-          status: GameCardStatus.SELECTED,
+          status: CardStatus.SELECTED,
         },
       };
     },
@@ -140,11 +140,11 @@ const clearSelections = gameModel.assign(
         ...context.cards,
         [context.selections[0]]: {
           ...context.cards[context.selections[0]],
-          status: GameCardStatus.DEFAULT,
+          status: CardStatus.DEFAULT,
         },
         [context.selections[1]]: {
           ...context.cards[context.selections[1]],
-          status: GameCardStatus.DEFAULT,
+          status: CardStatus.DEFAULT,
         },
       };
     },
