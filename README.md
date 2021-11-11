@@ -7,6 +7,11 @@ A card matching game following [classic Memory Game rules](https://www.classicga
 You can see the overall user experience in the following screen capture:
 ![Game experience](https://raw.githubusercontent.com/aaronmcadam/cat-match/main/docs/screencap.gif)
 
+## Game logic statechart
+
+The following XState statechart shows the game's logic:
+<img alt="Game statechart" src="https://raw.githubusercontent.com/aaronmcadam/cat-match/main/docs/statechart.jpg" height="500" />
+
 ## Jiji Design System
 
 <img alt="Jiji the cat" src="http://www.cinemacats.com/wp-content/uploads/movies/kikisdeliveryservice14.jpg" height="150" />
