@@ -2,6 +2,11 @@
 
 A card matching game following [classic Memory Game rules](https://www.classicgamesandpuzzles.com/Memory.html).
 
+## Deployed on Netlify
+
+You can play the game here:
+https://pedantic-kirch-adceb8.netlify.app/
+
 ## Game experience
 
 You can see the overall user experience in the following screen capture:
