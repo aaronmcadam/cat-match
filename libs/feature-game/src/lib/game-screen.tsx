@@ -77,7 +77,11 @@ export function GameScreen(props: GameScreenProps) {
               and have fun!
             </Heading>
           </Box>
-          {fetchStatus === 'loading' ? <Text>Loading...</Text> : null}
+          {fetchStatus === 'loading' ? (
+            <Text textAlign="center" fontWeight="medium" fontSize="xl">
+              Loading...
+            </Text>
+          ) : null}
           {fetchStatus === 'done' ? (
             <SimpleGrid
               as="ul"
