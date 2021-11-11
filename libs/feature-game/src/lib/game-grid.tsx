@@ -16,9 +16,14 @@ export function GameGrid({
 }: GameGridProps) {
   return (
     <Stack>
-      <Heading fontSize="xl" fontWeight="medium" textAlign="center">
+      <Heading
+        data-testid="heading-pair-count"
+        fontSize="xl"
+        fontWeight="medium"
+        textAlign="center"
+      >
         {pairCount} pair
-        {pairCount / 2 === 1 ? '' : 's'} matched!
+        {pairCount === 1 ? '' : 's'} matched!
       </Heading>
       <SimpleGrid
         as="ul"

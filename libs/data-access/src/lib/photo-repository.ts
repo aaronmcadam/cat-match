@@ -18,7 +18,7 @@ export class PhotoRepository {
     // We'll need to deal with slow performance on the front end.
     const limit = 12;
     const response = await fetch(
-      `https://api.thecatapi.com/v1/images/search?mime_types=[jpg]&size=thumb&limit=${limit}&order=RANDOM`
+      `https://api.thecatapi.com/v1/images/search?limit=${limit}&order=RANDOM`
     );
     const data: Cat[] = await response.json();
 

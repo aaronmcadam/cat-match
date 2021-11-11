@@ -5,7 +5,7 @@ describe('GameFinishedMessage', () => {
   it('renders a game finished message', () => {
     render(<GameFinishedMessage />);
 
-    expect(screen.getByText(/You completed the game!/)).toBeInTheDocument();
+    expect(screen.getByText(/completed the game/)).toBeInTheDocument();
   });
 
   it('lets the player play the game again', () => {
