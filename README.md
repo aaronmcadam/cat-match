@@ -4,8 +4,7 @@ A card matching game following [classic Memory Game rules](https://www.classicga
 
 ## Deployed on Netlify
 
-You can play the game here:
-https://pedantic-kirch-adceb8.netlify.app/
+You can play the game here: https://pedantic-kirch-adceb8.netlify.app/
 
 ## Game experience
 
