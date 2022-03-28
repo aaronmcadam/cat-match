@@ -30,7 +30,7 @@ The Figma designs are on the Figma Community here: https://www.figma.com/communi
 
 ## Storybooks
 
-We use [Storybook](https://storybook.js.org/) to develop and document our documents.
+We use [Storybook](https://storybook.js.org/) to develop and document our components.
 
 ### Jiji
 
